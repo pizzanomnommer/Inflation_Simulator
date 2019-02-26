@@ -1,0 +1,55 @@
+.Container {
+    display: grid;
+    grid-template-columns: auto, auto;
+    grid-template-rows: 1fr, 5fr;
+}
+
+.Top-Side {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+    background-color: blue;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    text-align: center;
+}
+.Center {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    background-color: green;
+    text-align: center;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+}
+.Right-Side {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    background-color: red;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+}
+
+.HelpersContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 1fr);
+}
+.Secretary {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+.Press {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+.Pay-off-wallstreet {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+}
+.Secret-Agent {
+    grid-column: 1 / 2;
+    grid-row: 4 / 5;
+}
+.Upgrade {
+    grid-column: 1 / 2;
+    grid-row: 5 / 6;
+}

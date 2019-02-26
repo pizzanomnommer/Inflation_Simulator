@@ -1,0 +1,142 @@
+<html lang="en-US">
+    <head>
+        <meta name="author" content="Max Radke">
+        <meta charset="utf-8">
+        <meta name="description" content="Simple clicker game.">
+
+        <!--<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">-->
+        <link rel="stylesheet" href="InflationStyle.css">
+        <title> Inflation Simulator </title>
+    </head>
+    <body>
+        <div class="Container">
+            <div class="Top-Side">
+                <p id="TresTotal"> Treasury Total: $0 </p>
+                <p id="DebtTotal"> Debt Total: $22000000000000 </p>
+            </div>
+            <div class="Center">
+                <input id="BillInput" src="Images/One_Dollar.jpg" type="image" width="300" onmousedown="Clicked()" onmouseup="UnClicked()" onmouseover="Hover()" onmouseout="MoveAway()">
+            </div>
+            <div class="Right-Side">
+                <div class="Helpers-Container">
+                    <div class="Secretary">
+                        <p>Secretary</p>
+                    </div>
+                    <div class="Press">
+                        <p>Press</p>
+                    </div>
+                    <div class="Pay-off-wallstreet">
+                        <p>Pay off wallstreet</p>
+                    </div>
+                    <div class="Secret-Agent">
+                        <p>Secret Agent</p>
+                    </div>
+                    <div class="Upgrade">
+                        <p>Upgrade</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Top elements. Includes total treasury and total debt.
+            let TresTotal = 0;
+            let DebtTotal = 22000000000000;
+
+            // Event handling for when the dollar gets clicked or hovered over
+            const BillInput = document.getElementById("BillInput");
+            function Clicked()
+            {
+                BillInput.width = 302;
+                AddTresTotal(1);
+            }
+            function UnClicked()
+            {
+                BillInput.width = 310;
+            }
+            function Hover()
+            {
+                BillInput.width = 310;
+            }
+            function MoveAway()
+            {
+                BillInput.width = 300;
+            }
+
+            // Adds or subtracts to the treasury
+            function AddTresTotal(Change)
+            {
+                TresTotal += Change;
+                document.getElementById("TresTotal").innerHTML = "Treasury Total: $" + TresTotal;
+            }
+
+            // Helpers that are made through inheritance. Gives money over time, per click, or other means.
+            // Name helps differentiate different helpers. Ammount shows how many helpers of that type you 
+            // have, it also acts as a multiplier.
+            class Helper
+            {
+                constructor(Name, Cost, SpriteImg)
+                {
+                    this.Name = Name;
+                    let Ammount = 0; // How many of this item the player has
+                    this.Cost = Cost;
+                    this.SpriteImg = SpriteImg;
+                }
+            }
+            class Printer extends Helper // Simply prints money over time
+            {
+                constructor(Name, Cost, SpriteImg, PrintPerSec)
+                {
+                    super(Name, Cost, SpriteImg);
+                    this.PrintPerSec = PrintPerSec;
+                }
+            }
+            class Agent extends Helper // Uses ability to decrease debt or inflation
+            {
+                constructor(Name, Cost, SpriteImg, TotalAbility)
+                {
+                    super(Name, Cost, SpriteImg);
+                    this.TotalAbility = TotalAbility;
+                }
+            }
+            class Bill extends Helper // Upgrades your dollar bill
+            {
+                constructor(Name, Cost, SpriteImg)
+                {
+                    super(Name, Cost, SpriteImg);
+                    let UpNumber = 0; // Upgrade Rank of the dollar bill
+                    let BillTotal = 1; // How valuable the bill is. Starts at 1 dollar
+                };
+
+                Upgrade()
+                {
+                    UpNumber++;
+                    if(UpNumber === 1)
+                    {
+                        BillTotal = 2;
+                    }
+                    else if(UpNumber === 2)
+                    {
+                        BillTotal = 5;
+                    }
+                    else if(UpNumber === 3)
+                    {
+                        BillTotal = 10;
+                    }
+                    else if(UpNumber === 4)
+                    {
+                        BillTotal = 20;
+                    }
+                    else if(UpNumber === 5)
+                    {
+                        BillTotal = 50;
+                    }
+                    else if(UpNumber === 6)
+                    {
+                        BillTotal = 100;
+                    }
+                };
+            }
+        </script>
+    </body>
+</html>
