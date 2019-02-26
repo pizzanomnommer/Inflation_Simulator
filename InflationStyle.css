@@ -1,3 +1,8 @@
+/*
+.BillInput{
+    position: absolute;
+}
+*/
 .Container {
     display: grid;
     grid-template-columns: auto, auto;

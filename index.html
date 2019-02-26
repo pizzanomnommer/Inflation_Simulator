@@ -15,7 +15,7 @@
                 <p id="DebtTotal"> Debt Total: $22000000000000 </p>
             </div>
             <div class="Center">
-                <input id="BillInput" src="Images/One_Dollar.jpg" type="image" width="300" onmousedown="Clicked()" onmouseup="UnClicked()" onmouseover="Hover()" onmouseout="MoveAway()">
+                <input class="BillInput" id="BillInput" src="Images/One_Dollar.jpg" type="image" width="300" onmousedown="Clicked()" onmouseup="UnClicked()" onmouseover="Hover()" onmouseout="MoveAway()">
             </div>
             <div class="Right-Side">
                 <div class="Helpers-Container">
@@ -66,7 +66,7 @@
             // Adds or subtracts to the treasury
             function AddTresTotal(Change)
             {
-                TresTotal += Change;
+                TresTotal += Upgrader.BillTotal;
                 document.getElementById("TresTotal").innerHTML = "Treasury Total: $" + TresTotal;
             }
 
@@ -101,42 +101,58 @@
             }
             class Bill extends Helper // Upgrades your dollar bill
             {
-                constructor(Name, Cost, SpriteImg)
+                constructor(Name, Cost, SpriteImg, UpNumber, BillTotal)
                 {
                     super(Name, Cost, SpriteImg);
-                    let UpNumber = 0; // Upgrade Rank of the dollar bill
-                    let BillTotal = 1; // How valuable the bill is. Starts at 1 dollar
+                    this.UpNumber = 0; // Upgrade Rank of the dollar bill
+                    this.BillTotal = 1; // How valuable the bill is. Starts at 1 dollar
                 };
 
                 Upgrade()
                 {
-                    UpNumber++;
-                    if(UpNumber === 1)
+                    if(TresTotal >= this.Cost)
                     {
-                        BillTotal = 2;
+                        this.UpNumber++;
+                        if(this.UpNumber === 1)
+                        {
+                            this.BillTotal = 2;
+                            BillInput.src = "Images\\Two_Dollar.jpg";
+                        }
+                        else if(this.UpNumber === 2)
+                        {
+                            this.BillTotal = 5;
+                            BillInput.src = "Images\\Five_Dollar.jpg";
+                        }
+                        else if(this.UpNumber === 3)
+                        {
+                            this.BillTotal = 10;
+                            BillInput.src = "Images\\Ten_Dollar.jpg";
+                        }
+                        else if(this.UpNumber === 4)
+                        {
+                            this.BillTotal = 20;
+                            BillInput.src = "Images\\Twenty_Dollar.jpg";
+                        }
+                        else if(this.UpNumber === 5)
+                        {
+                            this.BillTotal = 50;
+                            BillInput.src = "Images\\Fifty_Dollar.jpg";
+                        }
+                        else if(this.UpNumber === 6)
+                        {
+                            this.BillTotal = 100;
+                            BillInput.src = "Images\\Hundred_Dollar.jpg";
+                        }
                     }
-                    else if(UpNumber === 2)
+                    else
                     {
-                        BillTotal = 5;
-                    }
-                    else if(UpNumber === 3)
-                    {
-                        BillTotal = 10;
-                    }
-                    else if(UpNumber === 4)
-                    {
-                        BillTotal = 20;
-                    }
-                    else if(UpNumber === 5)
-                    {
-                        BillTotal = 50;
-                    }
-                    else if(UpNumber === 6)
-                    {
-                        BillTotal = 100;
+                        // Do => Not Enough Money Function
                     }
                 };
             }
+
+            let Upgrader = new Bill("UpgradeBill", 200, 1);
+            //BillInput.src = "Images\\Two_Dollar.jpg";
         </script>
     </body>
 </html>
