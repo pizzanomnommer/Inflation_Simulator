@@ -21,15 +21,19 @@
                 <div class="Helpers-Container">
                     <div class="Secretary">
                         <p>Secretary</p>
+                        <input class="Helper" id="Secretary" src="Images/Secretary.png" type="image" width="100">
                     </div>
                     <div class="Press">
                         <p>Press</p>
+                        <input class="Helper" id="Press" src="Images/Printing_Press.png" type="image" width="100">
                     </div>
                     <div class="Pay-off-wallstreet">
                         <p>Pay off wallstreet</p>
+                        <input class="Helper" id="PayWallstreet" src="Images/Bank.png" type="image" width="100">
                     </div>
                     <div class="Secret-Agent">
                         <p>Secret Agent</p>
+                        <input class="Helper" id="SecretAgent" src="Images/Spy.png" type="image" width="100">
                     </div>
                     <div class="Upgrade">
                         <p>Upgrade</p>
@@ -70,75 +74,81 @@
                 document.getElementById("TresTotal").innerHTML = "Treasury Total: $" + TresTotal;
             }
 
+            function InsufficientFunds()
+            {
+                alert("Insufficient funds for finacial transaction!");
+            }
+
             // Helpers that are made through inheritance. Gives money over time, per click, or other means.
             // Name helps differentiate different helpers. Ammount shows how many helpers of that type you 
             // have, it also acts as a multiplier.
             class Helper
             {
-                constructor(Name, Cost, SpriteImg)
+                constructor(Name, Cost, SpriteImgURL)
                 {
                     this.Name = Name;
                     let Ammount = 0; // How many of this item the player has
                     this.Cost = Cost;
-                    this.SpriteImg = SpriteImg;
+                    this.SpriteImgURL = SpriteImgURL;
                 }
             }
             class Printer extends Helper // Simply prints money over time
             {
-                constructor(Name, Cost, SpriteImg, PrintPerSec)
+                constructor(Name, Cost, SpriteImgURL, PrintPerSec)
                 {
-                    super(Name, Cost, SpriteImg);
+                    super(Name, Cost, SpriteImgURL);
                     this.PrintPerSec = PrintPerSec;
                 }
             }
             class Agent extends Helper // Uses ability to decrease debt or inflation
             {
-                constructor(Name, Cost, SpriteImg, TotalAbility)
+                constructor(Name, Cost, SpriteImgURL, TotalAbility)
                 {
-                    super(Name, Cost, SpriteImg);
+                    super(Name, Cost, SpriteImgURL);
                     this.TotalAbility = TotalAbility;
                 }
             }
             class Bill extends Helper // Upgrades your dollar bill
             {
-                constructor(Name, Cost, SpriteImg, UpNumber, BillTotal)
+                constructor(Name, Cost, SpriteImgURL, UpNumber, BillTotal)
                 {
-                    super(Name, Cost, SpriteImg);
+                    super(Name, Cost, SpriteImgURL);
                     this.UpNumber = 0; // Upgrade Rank of the dollar bill
                     this.BillTotal = 1; // How valuable the bill is. Starts at 1 dollar
                 };
 
-                Upgrade()
+                Upgrade() // Checks if the player has enough money, then upgrades the bill accordingly
                 {
-                    if(TresTotal >= this.Cost)
+                    if(TresTotal >= this.Cost) // Check if the player has the money
                     {
-                        this.UpNumber++;
-                        if(this.UpNumber === 1)
+                        TresTotal -= this.Cost; // Subtract cost from treasury
+                        this.UpNumber++;        // Increase the upgrade rank
+                        if(this.UpNumber === 1) // Two dollar bill
                         {
                             this.BillTotal = 2;
                             BillInput.src = "Images\\Two_Dollar.jpg";
                         }
-                        else if(this.UpNumber === 2)
+                        else if(this.UpNumber === 2) // Five dollar bill
                         {
                             this.BillTotal = 5;
                             BillInput.src = "Images\\Five_Dollar.jpg";
                         }
-                        else if(this.UpNumber === 3)
+                        else if(this.UpNumber === 3) // Ten dollar bill
                         {
                             this.BillTotal = 10;
                             BillInput.src = "Images\\Ten_Dollar.jpg";
                         }
-                        else if(this.UpNumber === 4)
+                        else if(this.UpNumber === 4) // Twenty dollar bill
                         {
                             this.BillTotal = 20;
                             BillInput.src = "Images\\Twenty_Dollar.jpg";
                         }
-                        else if(this.UpNumber === 5)
+                        else if(this.UpNumber === 5) // Fifty dollar bill
                         {
                             this.BillTotal = 50;
                             BillInput.src = "Images\\Fifty_Dollar.jpg";
                         }
-                        else if(this.UpNumber === 6)
+                        else if(this.UpNumber === 6) // Hundren dollar bill
                         {
                             this.BillTotal = 100;
                             BillInput.src = "Images\\Hundred_Dollar.jpg";
@@ -146,13 +156,20 @@
                     }
                     else
                     {
-                        // Do => Not Enough Money Function
+                        InsufficientFunds();
                     }
                 };
             }
 
+            // Constructors
             let Upgrader = new Bill("UpgradeBill", 200, 1);
-            //BillInput.src = "Images\\Two_Dollar.jpg";
+
+            const Helpers = document.querySelectorAll('.Helper'); // Helpers
+            let Secretary = new Printer("Secretary", 100, "Images/Secretary.png", 1);
+            let Press = new Printer("Press", 1000, "Images/Printing_Press.png", 20);
+            let wallstreet = new Agent("PayWallstreet", 10000, "Images/Bank.png", 100);
+            let SecAgent = new Agent("SecretAgent", 1000000, "Images/Spy.png", 1000);
+            
         </script>
     </body>
 </html>
