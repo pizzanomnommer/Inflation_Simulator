@@ -21,19 +21,19 @@
                 <div class="Helpers-Container">
                     <div class="Secretary">
                         <p>Secretary</p>
-                        <input class="Helper" id="Secretary" src="Images/Secretary.png" type="image" width="100">
+                        <input data-IN="1" class="Helper" id="Secretary" src="Images/Secretary.png" type="image" width="100">
                     </div>
                     <div class="Press">
                         <p>Press</p>
-                        <input class="Helper" id="Press" src="Images/Printing_Press.png" type="image" width="100">
+                        <input data-IN="2" class="Helper" id="Press" src="Images/Printing_Press.png" type="image" width="100">
                     </div>
                     <div class="Pay-off-wallstreet">
                         <p>Pay off wallstreet</p>
-                        <input class="Helper" id="PayWallstreet" src="Images/Bank.png" type="image" width="100">
+                        <input data-IN="3" class="Helper" id="PayWallstreet" src="Images/Bank.png" type="image" width="100">
                     </div>
                     <div class="Secret-Agent">
                         <p>Secret Agent</p>
-                        <input class="Helper" id="SecretAgent" src="Images/Spy.png" type="image" width="100">
+                        <input data-IN="4" class="Helper" id="SecretAgent" src="Images/Spy.png" type="image" width="100">
                     </div>
                     <div class="Upgrade">
                         <p>Upgrade</p>
@@ -52,7 +52,7 @@
             function Clicked()
             {
                 BillInput.width = 302;
-                AddTresTotal(1);
+                AddTresTotal(Upgrader.BillTotal);
             }
             function UnClicked()
             {
@@ -70,7 +70,7 @@
             // Adds or subtracts to the treasury
             function AddTresTotal(Change)
             {
-                TresTotal += Upgrader.BillTotal;
+                TresTotal += Change;
                 document.getElementById("TresTotal").innerHTML = "Treasury Total: $" + TresTotal;
             }
 
@@ -84,35 +84,48 @@
             // have, it also acts as a multiplier.
             class Helper
             {
-                constructor(Name, Cost, SpriteImgURL)
+                constructor(Name, Cost, SpriteImgURL, Ammount)
                 {
                     this.Name = Name;
-                    let Ammount = 0; // How many of this item the player has
+                    this.Ammount = 0; // How many of this item the player has
                     this.Cost = Cost;
                     this.SpriteImgURL = SpriteImgURL;
                 }
+
+                Buy()
+                {
+                    if(TresTotal > this.Cost)
+                    {
+                        this.Ammount++;
+                        AddTresTotal(-1 * this.Cost);
+                    }
+                    else
+                    {
+                        InsufficientFunds();
+                    }
+                };
             }
             class Printer extends Helper // Simply prints money over time
             {
-                constructor(Name, Cost, SpriteImgURL, PrintPerSec)
+                constructor(Name, Cost, SpriteImgURL, PrintPerSec, Ammount)
                 {
-                    super(Name, Cost, SpriteImgURL);
+                    super(Name, Cost, SpriteImgURL, Ammount);
                     this.PrintPerSec = PrintPerSec;
                 }
             }
             class Agent extends Helper // Uses ability to decrease debt or inflation
             {
-                constructor(Name, Cost, SpriteImgURL, TotalAbility)
+                constructor(Name, Cost, SpriteImgURL, TotalAbility, Ammount)
                 {
-                    super(Name, Cost, SpriteImgURL);
+                    super(Name, Cost, SpriteImgURL, Ammount);
                     this.TotalAbility = TotalAbility;
                 }
             }
             class Bill extends Helper // Upgrades your dollar bill
             {
-                constructor(Name, Cost, SpriteImgURL, UpNumber, BillTotal)
+                constructor(Name, Cost, SpriteImgURL, UpNumber, BillTotal, Ammount)
                 {
-                    super(Name, Cost, SpriteImgURL);
+                    super(Name, Cost, SpriteImgURL, Ammount);
                     this.UpNumber = 0; // Upgrade Rank of the dollar bill
                     this.BillTotal = 1; // How valuable the bill is. Starts at 1 dollar
                 };
@@ -164,11 +177,63 @@
             // Constructors
             let Upgrader = new Bill("UpgradeBill", 200, 1);
 
-            const Helpers = document.querySelectorAll('.Helper'); // Helpers
+            //const Helpers = document.querySelectorAll('.Helper'); // Helpers
             let Secretary = new Printer("Secretary", 100, "Images/Secretary.png", 1);
             let Press = new Printer("Press", 1000, "Images/Printing_Press.png", 20);
-            let wallstreet = new Agent("PayWallstreet", 10000, "Images/Bank.png", 100);
+            let Wallstreet = new Agent("PayWallstreet", 10000, "Images/Bank.png", 100);
             let SecAgent = new Agent("SecretAgent", 1000000, "Images/Spy.png", 1000);
+            let HelperArray = [Secretary, Press, Wallstreet, SecAgent];
+
+            const Helpers = Array.from(document.querySelectorAll('.Helper'));  // All event handelers for the Helpers
+            Helpers.forEach(Helper => Helper.addEventListener('mousedown', MouseEvent));
+            Helpers.forEach(Helper => Helper.addEventListener('mouseup', MouseEvent));
+            Helpers.forEach(Helper => Helper.addEventListener('mouseover', MouseEvent));
+            Helpers.forEach(Helper => Helper.addEventListener('mouseout', MouseEvent));
+
+            function MouseEvent(e) // Event that fires when a Helper's listener triggers
+            {
+                if(e.type === "mousedown") // Click
+                {
+                    e.target.width = 102;
+                    Purchase(e.target.id); // Finds the id of the Helper and then initiates purchase function
+                }
+                else if(e.type === "mouseup") // Unclicked
+                {
+                    e.target.width = 110;
+                }
+                else if(e.type === "mouseover") // Hovered over
+                {
+                    e.target.width = 110;
+                }
+                else if(e.type === "mouseout") // Hovered off
+                {
+                    e.target.width = 100;
+                }
+            }
+            function Purchase(id) // Buy based on the ID
+            {
+                if(id === "Secretary")
+                {
+                    Secretary.Buy();
+                }
+                else if(id === "Press")
+                {
+                    Press.Buy();
+                }
+                else if(id === "PayWallstreet")
+                {
+                    Wallstreet.Buy();
+                }
+                else if(id === "SecretAgent")
+                {
+                    SecAgent.Buy();
+                }
+            }
+            function UpdateTotals()
+            {
+                AddTresTotal((Secretary.PrintPerSec * Secretary.Ammount) + (Press.PrintPerSec * Press.Ammount));
+            }
+            setInterval(UpdateTotals, 1000);
             
         </script>
     </body>
