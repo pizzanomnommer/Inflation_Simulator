@@ -89,6 +89,7 @@
 
             xhr.onload = function() {
                 console.log("Sucess!");
+                console.log(xhr);
             };
 
             xhr.onerror = function() {
@@ -212,7 +213,6 @@
                         TresTotal -= this.Cost; // Subtract cost from treasury
                         this.UpNumber++;        // Increase the upgrade rank
                         let BillElement = document.getElementById("Upgrader");
-                        console.log("Test1");
                         if(this.UpNumber === 1) // Two dollar bill
                         {
                             this.BillTotal = 2;
@@ -245,7 +245,6 @@
                         }
                         else if(this.UpNumber === 6) // Hundred dollar bill
                         {
-                            console.log("Test2");
                             this.BillTotal = 100;
                             BillInput.src = "Images\\Hundred_Dollar.jpg";
                         }
