@@ -10,40 +10,93 @@
     </head>
     <body>
         <div class="Container">
-            <div class="Top-Side">
-                <p id="TresTotal"> Treasury Total: $0 </p>
-                <p id="DebtTotal"> Debt Total: $22000000000000 </p>
+            <div class="Top-Side"> 
+                <p class="Total" id="TresTotal"> Treasury Total: $0 </p>
+                <p class="Debt" id="DebtTotal"> Debt Total: $22000000000000 </p>
             </div>
             <div class="Center">
                 <input class="BillInput" id="BillInput" src="Images/One_Dollar.jpg" type="image" width="300" onmousedown="Clicked()" onmouseup="UnClicked()" onmouseover="Hover()" onmouseout="MoveAway()">
+                <p><b>^^CLICK ME!^^</b><br>Enter "AddTresTotal(10000000000);" into console to speed things up</p>
             </div>
             <div class="Right-Side">
                 <div class="Helpers-Container">
                     <div class="Secretary">
-                        <p>Secretary</p>
-                        <input data-IN="1" class="Helper" id="Secretary" src="Images/Secretary.png" type="image" width="100">
+                        <div class="Con-Container">
+                            <p class="Con-p">Secretary<br>Individual people painstakingly crafting cash<br>Cost: $100</p>
+                            <input class="Helper" id="Secretary" src="Images/Secretary.png" type="image" width="100">
+                            <div class="Tally">
+                                    <h2 id="SecretaryTally">X 0</h2>
+                            </div>
+                        </div>
                     </div>
                     <div class="Press">
-                        <p>Press</p>
-                        <input data-IN="2" class="Helper" id="Press" src="Images/Printing_Press.png" type="image" width="100">
+                        <div class="Con-Container">
+                            <p class="Con-p">Press<br>Mechinized money printing<br>Cost: $1000</p>
+                            <input class="Helper" id="Press" src="Images/Printing_Press.png" type="image" width="100">
+                            <div class="Tally">
+                                <h2 id="PressTally">X 0</h2>
+                            </div>
+                        </div>
                     </div>
                     <div class="Pay-off-wallstreet">
-                        <p>Pay off wallstreet</p>
-                        <input data-IN="3" class="Helper" id="PayWallstreet" src="Images/Bank.png" type="image" width="100">
+                        <div class="Con-Container">
+                            <p class="Con-p">Pay off wallstreet<br>"Inflation? the only thing that will be<br> inflating is our wallets amirite folks!?"<br>Cost: $10000</p>
+                            <input class="Helper" id="PayWallstreet" src="Images/Bank.png" type="image" width="100">
+                            <div class="Tally">
+                                    <h2 id="WallTally">X 0</h2>
+                            </div>
+                        </div>
                     </div>
                     <div class="Secret-Agent">
-                        <p>Secret Agent</p>
-                        <input data-IN="4" class="Helper" id="SecretAgent" src="Images/Spy.png" type="image" width="100">
+                        <div class="Con-Container">
+                            <p class="Con-p">Secret Agent<br>"China is hounding us again? I'll see what I can do."<br>Cost: $1000000</p>
+                            <input class="Helper" id="SecretAgent" src="Images/Spy.png" type="image" width="100">
+                            <div class="Tally">
+                                <h2 id="AgentTally">X 0</h2>
+                            </div>
+                        </div>
                     </div>
                     <div class="Upgrade">
-                        <p>Upgrade</p>
+                        <div class="Con-Container">
+                            <p class="Con-p">Upgrade<br>"Bigger cash means bigger profits! Right?"<br>Cost: $200</p>
+                            <input class="Helper" id="Upgrader" src="Images/Two_Dollar.jpg" type="image" width="100">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <script>
-            // Top elements. Includes total treasury and total debt.
+            var createCORSRequest = function(method, url) {
+                var xhr = new XMLHttpRequest();
+                if ("withCredentials" in xhr) {
+                    // Most browsers.
+                    xhr.open(method, url, true);
+                } else if (typeof XDomainRequest != "undefined") {
+                    // IE8 & IE9
+                    xhr = new XDomainRequest();
+                    xhr.open(method, url);
+                } else {
+                    // CORS not supported.
+                    xhr = null;
+                }
+              return xhr;
+            };
+
+            var url = '/services/api/fiscal_service/v1/accounting/od/debt_to_penny';
+            var method = 'GET';
+            var xhr = createCORSRequest(method, url);
+
+            xhr.onload = function() {
+                console.log("Sucess!");
+            };
+
+            xhr.onerror = function() {
+                console.log("Error!");
+            };
+
+            xhr.send();
+
             let TresTotal = 0;
             let DebtTotal = 22000000000000;
 
@@ -74,14 +127,23 @@
                 document.getElementById("TresTotal").innerHTML = "Treasury Total: $" + TresTotal;
             }
 
+            // Adds one to the specified Helper ammount
+            function AddHelper(Helper)
+            {
+                Helper.Ammount++;
+                document.getElementById(Helper.Name).innerHTML = "X " + Helper.Ammount;
+            }
+
+            // Called by object when the cost is greater that the treasury
             function InsufficientFunds()
             {
-                alert("Insufficient funds for finacial transaction!");
+                alert("Insufficient funds for financial transaction!");
             }
 
             // Helpers that are made through inheritance. Gives money over time, per click, or other means.
             // Name helps differentiate different helpers. Ammount shows how many helpers of that type you 
             // have, it also acts as a multiplier.
+            // **NOTICE** Banks and agents are currently a work in progress!
             class Helper
             {
                 constructor(Name, Cost, SpriteImgURL, Ammount)
@@ -96,8 +158,8 @@
                 {
                     if(TresTotal > this.Cost)
                     {
-                        this.Ammount++;
                         AddTresTotal(-1 * this.Cost);
+                        AddHelper(this);
                     }
                     else
                     {
@@ -130,39 +192,60 @@
                     this.BillTotal = 1; // How valuable the bill is. Starts at 1 dollar
                 };
 
+                Buy()
+                {
+                    if(TresTotal > this.Cost)
+                    {
+                        this.Upgrade();
+                        AddTresTotal(-1 * this.Cost);
+                    }
+                    else
+                    {
+                        InsufficientFunds();
+                    }
+                };
+
                 Upgrade() // Checks if the player has enough money, then upgrades the bill accordingly
                 {
                     if(TresTotal >= this.Cost) // Check if the player has the money
                     {
                         TresTotal -= this.Cost; // Subtract cost from treasury
                         this.UpNumber++;        // Increase the upgrade rank
+                        let BillElement = document.getElementById("Upgrader");
+                        console.log("Test1");
                         if(this.UpNumber === 1) // Two dollar bill
                         {
                             this.BillTotal = 2;
                             BillInput.src = "Images\\Two_Dollar.jpg";
+                            BillElement.src ="Images\\Five_Dollar.jpg";
                         }
                         else if(this.UpNumber === 2) // Five dollar bill
                         {
                             this.BillTotal = 5;
                             BillInput.src = "Images\\Five_Dollar.jpg";
+                            BillElement.src ="Images\\Ten_Dollar.jpg";
                         }
                         else if(this.UpNumber === 3) // Ten dollar bill
                         {
                             this.BillTotal = 10;
                             BillInput.src = "Images\\Ten_Dollar.jpg";
+                            BillElement.src ="Images\\Twenty_Dollar.jpg";
                         }
                         else if(this.UpNumber === 4) // Twenty dollar bill
                         {
                             this.BillTotal = 20;
                             BillInput.src = "Images\\Twenty_Dollar.jpg";
+                            BillElement.src ="Images\\Fifty_Dollar.jpg";
                         }
                         else if(this.UpNumber === 5) // Fifty dollar bill
                         {
                             this.BillTotal = 50;
                             BillInput.src = "Images\\Fifty_Dollar.jpg";
+                            BillElement.src ="Images\\Hundred_Dollar.jpg";
                         }
-                        else if(this.UpNumber === 6) // Hundren dollar bill
+                        else if(this.UpNumber === 6) // Hundred dollar bill
                         {
+                            console.log("Test2");
                             this.BillTotal = 100;
                             BillInput.src = "Images\\Hundred_Dollar.jpg";
                         }
@@ -175,14 +258,11 @@
             }
 
             // Constructors
-            let Upgrader = new Bill("UpgradeBill", 200, 1);
-
-            //const Helpers = document.querySelectorAll('.Helper'); // Helpers
-            let Secretary = new Printer("Secretary", 100, "Images/Secretary.png", 1);
-            let Press = new Printer("Press", 1000, "Images/Printing_Press.png", 20);
-            let Wallstreet = new Agent("PayWallstreet", 10000, "Images/Bank.png", 100);
-            let SecAgent = new Agent("SecretAgent", 1000000, "Images/Spy.png", 1000);
-            let HelperArray = [Secretary, Press, Wallstreet, SecAgent];
+            let Upgrader = new Bill("UpgradeBill", 200, "Images/Two_Dollar.jpg");
+            let Secretary = new Printer("SecretaryTally", 100, "Images/Secretary.png", 1);
+            let Press = new Printer("PressTally", 1000, "Images/Printing_Press.png", 20);
+            let Wallstreet = new Agent("WallTally", 10000, "Images/Bank.png", 100);
+            let SecAgent = new Agent("AgentTally", 1000000, "Images/Spy.png", 1000);
 
             const Helpers = Array.from(document.querySelectorAll('.Helper'));  // All event handelers for the Helpers
             Helpers.forEach(Helper => Helper.addEventListener('mousedown', MouseEvent));
@@ -228,12 +308,16 @@
                 {
                     SecAgent.Buy();
                 }
+                else if(id === "Upgrader")
+                {
+                    Upgrader.Buy();
+                }
             }
             function UpdateTotals()
             {
                 AddTresTotal((Secretary.PrintPerSec * Secretary.Ammount) + (Press.PrintPerSec * Press.Ammount));
             }
-            setInterval(UpdateTotals, 1000);
+            setInterval(UpdateTotals, 500); // Gives you your cash every half second
             
         </script>
     </body>
