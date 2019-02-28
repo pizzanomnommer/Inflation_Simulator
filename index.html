@@ -67,6 +67,7 @@
         </div>
 
         <script>
+            /*
             var createCORSRequest = function(method, url) {
                 var xhr = new XMLHttpRequest();
                 if ("withCredentials" in xhr) {
@@ -98,7 +99,10 @@
             };
 
             xhr.send();
-
+            */
+           $.getJSON('https://api.transparency.treasury.gov/services/api/fiscal_service/v1/accounting/od/debt_to_penny?sort=-data_date&page%5Bnumber%5D=1&page%5Bsize%5D=1', function(data) {
+               console.log(data);
+           });
             let TresTotal = 0;
             let DebtTotal = 22000000000000;
 
