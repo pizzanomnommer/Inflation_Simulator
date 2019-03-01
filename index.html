@@ -7,8 +7,15 @@
         <!--<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">-->
         <link rel="stylesheet" href="InflationStyle.css">
         <title> Inflation Simulator </title>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-        <script src="API.js" crossorigin="anonymous"></script>
+        <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>-->
+        <!--<script src="API.js" crossorigin="anonymous"></script>-->
+
+        <script>
+            let cb = function(data){
+                console.log(data);
+            }
+        </script>
+        <script src="https://www.transparency.treasury.gov/services/api/fiscal_service/v1/accounting/od/debt_to_penny?sort=-data_date&page%5Bnumber%5D=1&page%5Bsize%5D=1?callback=cb"></script>
     </head>
     <body>
         <div class="Container">
